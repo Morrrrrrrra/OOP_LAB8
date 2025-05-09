@@ -1,0 +1,80 @@
+using System;
+using System.IO;
+class Program
+{
+    static void Main()
+    {
+        string group = "KNms1-B24";
+        string lastName = "Nekrasova";
+        string basePath = @"C:\OOP_lab08";
+        try
+        {
+            DirectoryInfo mainDir = new DirectoryInfo(basePath);            //Створення основної директорії
+            if (!mainDir.Exists)
+            {
+                mainDir.Create();
+                Console.WriteLine("Main directory created.");
+            }
+            string[] subDirs = { "Sources", "Reports", "Texts", lastName, group };            //Створення підкаталогів
+            foreach (string dir in subDirs)
+            {
+                string subDirPath = Path.Combine(basePath, dir);
+                if (!Directory.Exists(subDirPath))
+                    Directory.CreateDirectory(subDirPath);
+            }
+            Console.WriteLine("Initial subdirectories created.");
+            CopyDirectoryUsingFileInfo(Path.Combine(basePath, "Sources"), Path.Combine(basePath, lastName, "Sources"));  // Копіювання вмісту каталогів у каталог з прізвищем
+            CopyDirectoryUsingFileInfo(Path.Combine(basePath, "Reports"), Path.Combine(basePath, lastName, "Reports"));
+            CopyDirectoryUsingFileInfo(Path.Combine(basePath, "Texts"), Path.Combine(basePath, lastName, "Texts"));
+            Console.WriteLine("Subdirectories copied into personal folder.");
+            string sourcePath = Path.Combine(basePath, lastName);            //Переміщення каталогу прізвища до каталогу групи
+            string destinationPath = Path.Combine(basePath, group, lastName);
+            if (Directory.Exists(destinationPath))
+                Directory.Delete(destinationPath, true);
+            Directory.Move(sourcePath, destinationPath);
+            Console.WriteLine("Personal folder moved to group folder.");
+            string textsPath = Path.Combine(basePath, "Texts");            // Створення файлу dirinfo.txt у каталозі Texts
+            string infoFilePath = Path.Combine(textsPath, "dirinfo.txt");
+            DirectoryInfo textsDir = new DirectoryInfo(textsPath);
+            using (StreamWriter writer = new StreamWriter(infoFilePath))
+            {
+                writer.WriteLine("Directory Info:");
+                writer.WriteLine($"Full Name: {textsDir.FullName}");
+                writer.WriteLine($"Creation Time: {textsDir.CreationTime}");
+                writer.WriteLine($"Last Access Time: {textsDir.LastAccessTime}");
+                writer.WriteLine($"Attributes: {textsDir.Attributes}");
+            }
+            Console.WriteLine("dirinfo.txt created.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
+    }
+    static void CopyDirectoryUsingFileInfo(string sourceDir, string targetDir)    // Метод копіювання каталогів через FileInfo.CopyTo
+    {
+        DirectoryInfo source = new DirectoryInfo(sourceDir);
+        DirectoryInfo target = new DirectoryInfo(targetDir);
+        if (!source.Exists)
+            return;
+        if (!target.Exists)
+            target.Create();
+        foreach (FileInfo file in source.GetFiles())        // Копіювання файлів за допомогою FileInfo.CopyTo
+        {
+            string newPath = Path.Combine(target.FullName, file.Name);
+            FileInfo fileInf = new FileInfo(file.FullName);
+            if (fileInf.Exists)
+            {
+                fileInf.CopyTo(newPath, true); 
+            }
+        }
+        foreach (DirectoryInfo subDir in source.GetDirectories())        // Рекурсивне копіювання підкаталогів
+        {
+            string newSubDir = Path.Combine(target.FullName, subDir.Name);
+            CopyDirectoryUsingFileInfo(subDir.FullName, newSubDir);
+        }
+    }
+}
