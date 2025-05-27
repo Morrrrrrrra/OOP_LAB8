@@ -7,13 +7,12 @@ namespace LAB8App
     {
         static void Main(string[] args)
         {
-
             string fileName = @"C:\Users\notha\Desktop\ООП\8\f.txt";            // Шлях до файлу f
             DisplayNumbersInFile(fileName);            // Вивід всіх чисел з файлу на екран
             CreateFile(fileName);            // Запис чисел у файл
             int[] numbers = ReadNumbersFromFile(fileName);            // Зчитування чисел з файлу
             int evenCount = numbers.Count(x => x % 2 == 0);            // Кількість парних чисел
-            int doubledEvenCount = numbers.Count(x => x % 4 == 0);            // Кількість подвоєних парних чисел (кратних 4)
+            int doubledEvenCount = numbers.Count(x => x % 4 == 0);            // Кількість чисел кратних 4
             int oddSquareCount = numbers.Count(x =>            // Кількість квадратів непарних чисел
             {
                 if (x > 0)
@@ -36,7 +35,7 @@ namespace LAB8App
             {
                 Console.Write(number + " ");
             }
-            Console.WriteLine();  
+            Console.WriteLine();
         }
         static void CreateFile(string fileName)        // Створення файлу з числами (запис чисел у файл)
         {
@@ -57,7 +56,7 @@ namespace LAB8App
                 fstream.Read(array, 0, array.Length);
                 content = System.Text.Encoding.Default.GetString(array);
             }
-            return content.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)    // Перетворення рядку на масив чисел
+            return content.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)  
                           .Select(int.Parse)
                           .ToArray();
         }
