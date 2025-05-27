@@ -23,17 +23,17 @@ class Program
                     Directory.CreateDirectory(subDirPath);
             }
             Console.WriteLine("Initial subdirectories created.");
-            CopyDirectoryUsingFileInfo(Path.Combine(basePath, "Sources"), Path.Combine(basePath, lastName, "Sources"));  // Копіювання вмісту каталогів у каталог з прізвищем
+            CopyDirectoryUsingFileInfo(Path.Combine(basePath, "Sources"), Path.Combine(basePath, lastName, "Sources")); 
             CopyDirectoryUsingFileInfo(Path.Combine(basePath, "Reports"), Path.Combine(basePath, lastName, "Reports"));
             CopyDirectoryUsingFileInfo(Path.Combine(basePath, "Texts"), Path.Combine(basePath, lastName, "Texts"));
             Console.WriteLine("Subdirectories copied into personal folder.");
-            string sourcePath = Path.Combine(basePath, lastName);            //Переміщення каталогу прізвища до каталогу групи
+            string sourcePath = Path.Combine(basePath, lastName);       
             string destinationPath = Path.Combine(basePath, group, lastName);
             if (Directory.Exists(destinationPath))
                 Directory.Delete(destinationPath, true);
             Directory.Move(sourcePath, destinationPath);
             Console.WriteLine("Personal folder moved to group folder.");
-            string textsPath = Path.Combine(basePath, "Texts");            // Створення файлу dirinfo.txt у каталозі Texts
+            string textsPath = Path.Combine(basePath, "Texts");            
             string infoFilePath = Path.Combine(textsPath, "dirinfo.txt");
             DirectoryInfo textsDir = new DirectoryInfo(textsPath);
             using (StreamWriter writer = new StreamWriter(infoFilePath))
@@ -50,11 +50,8 @@ class Program
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-
-        Console.WriteLine("Press any key to exit...");
-        Console.ReadKey();
     }
-    static void CopyDirectoryUsingFileInfo(string sourceDir, string targetDir)    // Метод копіювання каталогів через FileInfo.CopyTo
+    static void CopyDirectoryUsingFileInfo(string sourceDir, string targetDir)    
     {
         DirectoryInfo source = new DirectoryInfo(sourceDir);
         DirectoryInfo target = new DirectoryInfo(targetDir);
@@ -68,7 +65,7 @@ class Program
             FileInfo fileInf = new FileInfo(file.FullName);
             if (fileInf.Exists)
             {
-                fileInf.CopyTo(newPath, true); 
+                fileInf.CopyTo(newPath, true);
             }
         }
         foreach (DirectoryInfo subDir in source.GetDirectories())        // Рекурсивне копіювання підкаталогів
